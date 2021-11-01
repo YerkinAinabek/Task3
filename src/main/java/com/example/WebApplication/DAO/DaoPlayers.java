@@ -1,110 +1,123 @@
 package com.example.WebApplication.DAO;
 
-import com.example.WebApplication.DataSourceFactory;
 import com.example.WebApplication.Models.Players;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class DaoPlayers implements PlayersDao {
 
-    private DaoPlayers () {
+    private String jdbcURL = "jdbc:mysql://localhost:3306/playersdb?useSSL=false&useUnicode=true&serverTimezone=UTC";
+    private String jdbcUsername = "root";
+    private String jdbcPassword = "23011999";
+    public Connection connection;
+
+    private static final String INSERT_USERS_SQL = "INSERT INTO players" + "  (nickname, player_lvl, biography) VALUES " +
+            " (?, ?, ?);";
+
+    private static final String SELECT_USER_BY_ID = "SELECT player_id,nickname,player_lvl,biography FROM players where player_id =?";
+    private static final String SELECT_ALL_USERS = "SELECT * FROM players;";
+    private static final String DELETE_USERS_SQL = "DELETE FROM players WHERE player_id = ?;";
+    private static final String UPDATE_USERS_SQL = "update players set nickname = ?,player_lvl= ?, biography =? where player_id = ?;";
+
+    public DaoPlayers() {}
+
+    public DaoPlayers(Connection connection) {
+        this.connection = connection;
     }
 
-    private static class SingletonHelper {
-        private static final DaoPlayers INSTANCE = new DaoPlayers();
-    }
-
-
-    public static DaoPlayers getInstance() {
-        return SingletonHelper.INSTANCE;
-    }
-
-
-
-    @Override
-    public Optional<Players> find(String id) throws SQLException {
-        String sql = "SELECT players_id, nickname, player_lvl, biography FROM players WHERE player_id = ?";
-        int id_player = 0, player_lvl = 0;
-        String nickname = "", biography = "";
-        Connection conn = DataSourceFactory.getConnection();
-
-        PreparedStatement statement = conn.prepareStatement(sql);
-        statement.setString(1, id);
-        ResultSet resultSet = statement.executeQuery();
-
-        if (resultSet.next()) {
-            id_player = resultSet.getInt("player_id");
-            nickname = resultSet.getString("nickname");
-            player_lvl = resultSet.getInt("player_lvl");
-            biography = resultSet.getString("biography");
+    protected Connection getConnection() {
+        Connection connection = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
-        return Optional.of(new Players(id_player, nickname, player_lvl, biography));
+        return connection;
     }
 
     @Override
-    public List<Players> findAll() throws SQLException {
+    public Players find(int id) throws SQLException {
+
+        Players player = null;
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_ID);
+        preparedStatement.setInt(1, id);
+        System.out.println(preparedStatement);
+        ResultSet rs = preparedStatement.executeQuery();
+
+        while (rs.next()) {
+            String nickname = rs.getString("nickname");
+            int lvl = rs.getInt("player_lvl");
+            String biography = rs.getString("biography");
+            player = new Players(id, nickname, lvl, biography);
+        }
+        return player;
+    }
+
+    @Override
+    public List<Players> findAll() throws NullPointerException {
+
         List<Players> listPlayers = new ArrayList<>();
-        String sql = "SELECT player_id, nickname, player_lvl, biography FROM players";
+        try (Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS);) {
+            System.out.println(preparedStatement);
+            ResultSet rs = preparedStatement.executeQuery();
 
-        Connection conn = DataSourceFactory.getConnection();
-        Statement statement = conn.createStatement();
-        ResultSet resultSet = statement.executeQuery(sql);
-
-        while (resultSet.next()) {
-            int player_id = resultSet.getInt("player_id");
-            String nickname = resultSet.getString("nickname");
-            int player_lvl = resultSet.getInt("player_lvl");
-            String biography = resultSet.getString("biography");
-
-            Players players = new Players(player_id, nickname, player_lvl, biography);
-            listPlayers.add(players);
+            while (rs.next()) {
+                int id = rs.getInt("player_id");
+                String nickname = rs.getString("nickname");
+                int lvl = rs.getInt("player_lvl");
+                String biography = rs.getString("biography");
+                //Players players = new Players(id, nickname, lvl, biography);
+                listPlayers.add(new Players(id,nickname,lvl,biography));
+            }
+        } catch (SQLException | NullPointerException e) {
+            e.printStackTrace();
         }
-        return listPlayers;
+    return listPlayers;
     }
 
     @Override
-    public boolean save(Players players) throws SQLException {
+    public void insert(Players player) throws SQLException {
 
-        String sql = "INSERT into players (nickname, player_lvl, biography) VALUES (?, ?, ?)";
-        boolean rowInserted = false;
-        Connection conn = DataSourceFactory.getConnection();
-        PreparedStatement statement = conn.prepareStatement(sql);
-        statement.setString(1, players.getNickname());
-        statement.setInt(2, players.getPlayer_lvl());
-        statement.setString(3, players.getBiography());
-        rowInserted = statement.executeUpdate() > 0 ;
-
-        return rowInserted;
+        System.out.println(INSERT_USERS_SQL);
+        try (Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USERS_SQL);) {
+            preparedStatement.setString(1, player.getNickname());
+            preparedStatement.setInt(2, player.getLvl());
+            preparedStatement.setString(3, player.getBiography());
+            System.out.println(preparedStatement);
+            preparedStatement.executeUpdate();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public boolean update(Players players) throws SQLException {
-        String sql = "UPDATE players SET nickname = ?, player_lvl = ?, biography = ?";
-        sql += " WHERE player_id = ?";
-        boolean rowUpdated = false;
-        Connection conn = DataSourceFactory.getConnection();
-        PreparedStatement statement = conn.prepareStatement(sql);
-        statement.setString(1, players.getNickname());
-        statement.setInt(2, players.getPlayer_lvl());
-        statement.setString(3, players.getBiography());
-        statement.setInt(4, players.getPlayer_id());
+    public boolean update(Players player) throws SQLException {
+
+        boolean rowUpdated;
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(UPDATE_USERS_SQL);
+        statement.setString(1, player.getNickname());
+        statement.setInt(2, player.getLvl());
+        statement.setString(3, player.getBiography());
+        statement.setInt(4, player.getId());
+
         rowUpdated = statement.executeUpdate() > 0;
-
         return rowUpdated;
     }
 
     @Override
-    public boolean delete(Players players) throws SQLException {
+    public boolean delete(int id) throws SQLException {
 
-        String sql = "DELETE FROM players where player_id = ?";
         boolean rowDeleted = false;
 
-        Connection conn = DataSourceFactory.getConnection();
-        PreparedStatement statement = conn.prepareStatement(sql);
-        statement.setInt(1, players.getPlayer_id());
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(DELETE_USERS_SQL);
+        statement.setInt(1, id);
         rowDeleted = statement.executeUpdate() > 0;
 
         return rowDeleted;

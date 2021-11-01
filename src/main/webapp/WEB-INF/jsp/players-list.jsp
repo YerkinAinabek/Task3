@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 
 <head>
@@ -41,29 +41,30 @@
             <tr>
                 <th>ID</th>
                 <th>Nickname</th>
-                <th>Player Level</th>
+                <th>Level</th>
                 <th>Biography</th>
             </tr>
             </thead>
             <tbody>
             <!--   for (Todo todo: todos) {  -->
+
+            <jsp:useBean id="listPlayers" scope="request" type="java.util.List"/>
             <c:forEach var="player" items="${listPlayers}">
 
                 <tr>
                     <td>
-                        <c:out value="${players.player_id}" />
+                        <c:out value="${player.id}" />
                     </td>
                     <td>
-                        <c:out value="${players.nickname}" />
+                        <c:out value="${player.nickname}" />
                     </td>
                     <td>
-                        <c:out value="${players.player_lvl}" />
+                        <c:out value="${player.lvl}" />
                     </td>
                     <td>
-                        <c:out value="${players.biography}" />
+                        <c:out value="${player.biography}" />
                     </td>
-                    <td><a href="edit?id=<c:out value='${players.player_id}' />">Edit</a> &nbsp;&nbsp;&nbsp;&nbsp;
-                        <a href="delete?id=<c:out value='${players.player_id}' />">Delete</a></td>
+                    <td><a href="edit?id=<c:out value='${player.id}'/>">Edit</a> &nbsp;&nbsp;&nbsp;&nbsp; <a href="delete?id=<c:out value='${player.id}' />">Delete</a></td>
                 </tr>
             </c:forEach>
             <!-- } -->

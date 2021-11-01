@@ -1,6 +1,6 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
 
 <head>
@@ -25,38 +25,38 @@
 <div class="container col-md-5">
     <div class="card">
         <div class="card-body">
-            <c:if test="${players != null}">
+            <c:if test="${player != null}">
             <form action="update" method="post">
                 </c:if>
-                <c:if test="${players == null}">
+                <c:if test="${player == null}">
                 <form action="insert" method="post">
                     </c:if>
 
                     <caption>
                         <h2>
-                            <c:if test="${players != null}">
+                            <c:if test="${player != null}">
                                 Edit User
                             </c:if>
-                            <c:if test="${players == null}">
+                            <c:if test="${player == null}">
                                 Add New User
                             </c:if>
                         </h2>
                     </caption>
 
-                    <c:if test="${players != null}">
-                        <input type="hidden" name="id" value="<c:out value='${players.player_id}' />" />
+                    <c:if test="${player != null}">
+                        <input type="hidden" name="id" value="<c:out value='${player.id}' />" />
                     </c:if>
 
                     <fieldset class="form-group">
-                        <label>User Name</label> <input type="text" value="<c:out value='${players.nickname}' />" class="form-control" name="nickname" required="required">
+                        <label>Nickname</label> <input type="text" value="<c:out value='${player.nickname}' />" class="form-control" name="nickname" required="required">
                     </fieldset>
 
                     <fieldset class="form-group">
-                        <label>User Email</label> <input type="text" value="<c:out value='${players.player_lvl}' />" class="form-control" name="player_lvl">
+                        <label>Level</label> <input type="text" value="<c:out value='${player.lvl}' />" class="form-control" name="lvl">
                     </fieldset>
 
                     <fieldset class="form-group">
-                        <label>User Country</label> <input type="text" value="<c:out value='${players.biography}' />" class="form-control" name="biography">
+                        <label>Biography</label> <input type="text" value="<c:out value='${player.biography}' />" class="form-control" name="biography">
                     </fieldset>
 
                     <button type="submit" class="btn btn-success">Save</button>

@@ -1,36 +1,38 @@
 package com.example.WebApplication.Models;
 
+import java.util.Objects;
+
 public class Players {
 
-    protected int player_id;
+    protected int id;
     protected String nickname;
     protected String biography;
-    protected int player_lvl;
+    protected int lvl;
 
     public Players() {
     }
 
     public Players(int player_id) {
-        this.player_id=player_id;
+        this.id=id;
     }
 
-    public Players(int player_id, String nickname, int player_lvl, String biography) {
-        this(nickname, player_lvl, biography);
-        this.player_id = player_id;
+    public Players(int id, String nickname, int lvl, String biography) {
+        this(nickname, lvl, biography);
+        this.id = id;
     }
 
-    public Players(String nickname, int player_lvl, String biography) {
+    public Players(String nickname, int lvl, String biography) {
         this.nickname = nickname;
         this.biography = biography;
-        this.player_lvl = player_lvl;
+        this.lvl = lvl;
     }
 
-    public int getPlayer_id() {
-        return player_id;
+    public int getId() {
+        return id;
     }
 
-    public void setPlayer_id(int player_id) {
-        this.player_id = player_id;
+    public void setId(int player_id) {
+        this.id = id;
     }
 
     public String getNickname() {
@@ -49,13 +51,37 @@ public class Players {
         this.biography = biography;
     }
 
-    public int getPlayer_lvl() {
-        return player_lvl;
+    public int getLvl() {
+        return lvl;
     }
 
-    public void setPlayer_lvl(int player_lvl) {
-        this.player_lvl = player_lvl;
+    public void setLvl(int lvl) {
+        this.lvl = lvl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Players player = (Players) o;
+        return Objects.equals(nickname,player.nickname) && Objects.equals(id, player.id) && Objects.equals(lvl, player.lvl) && Objects.equals(biography,player.biography);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, nickname, lvl, biography);
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "id=" + id +
+                ", nickname='" + nickname + '\'' +
+                ", level='" + lvl + '\'' +
+                ", bio=" + biography +
+                '}';
     }
 }
+
 
 
