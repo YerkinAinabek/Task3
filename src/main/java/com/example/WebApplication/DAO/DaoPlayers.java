@@ -5,8 +5,13 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class that is responsible for interaction with database.
+ */
 public class DaoPlayers implements PlayersDao {
-
+    /**
+     * Here we initialize database URL, user's name and password to connect via JDBC Connector
+     */
     private String jdbcURL = "jdbc:mysql://localhost:3306/playersdb?useSSL=false&useUnicode=true&serverTimezone=UTC";
     private String jdbcUsername = "root";
     private String jdbcPassword = "23011999";
@@ -20,12 +25,23 @@ public class DaoPlayers implements PlayersDao {
     private static final String DELETE_USERS_SQL = "DELETE FROM players WHERE player_id = ?;";
     private static final String UPDATE_USERS_SQL = "update players set nickname = ?,player_lvl= ?, biography =? where player_id = ?;";
 
+    /**
+     * Simple DAO constructor
+     */
     public DaoPlayers() {}
 
+    /**
+     * Connection constructor for Unit-testing
+     * @param connection - variable, which includes getConnection() methods return value connection
+     */
     public DaoPlayers(Connection connection) {
         this.connection = connection;
     }
 
+    /**
+     * Getting connection to the DB
+     * @return connection param
+     */
     protected Connection getConnection() {
         Connection connection = null;
         try {
@@ -37,6 +53,12 @@ public class DaoPlayers implements PlayersDao {
         return connection;
     }
 
+    /**
+     * Method for user selection query initialization
+     * @param id - user's id
+     * @return player object using id
+     * @throws SQLException
+     */
     @Override
     public Players find(int id) throws SQLException {
 
@@ -56,6 +78,11 @@ public class DaoPlayers implements PlayersDao {
         return player;
     }
 
+    /**
+     * This method shows list of all players from the database
+     * @return listPlayers - all selected players from the DB
+     * @throws NullPointerException if there is now connection to the DB
+     */
     @Override
     public List<Players> findAll() throws NullPointerException {
 
@@ -79,6 +106,11 @@ public class DaoPlayers implements PlayersDao {
     return listPlayers;
     }
 
+    /**
+     * Inserts new player into the DB
+     * @param player - entity which is being inserted
+     * @throws SQLException
+     */
     @Override
     public void insert(Players player) throws SQLException {
 
@@ -95,6 +127,12 @@ public class DaoPlayers implements PlayersDao {
         }
     }
 
+    /**
+     * Method used to edit players from the list and to update them eventually
+     * @param player - player from the DB to be updated
+     * @return rowUpdated - returns updated DB row
+     * @throws SQLException
+     */
     @Override
     public boolean update(Players player) throws SQLException {
 
@@ -110,6 +148,12 @@ public class DaoPlayers implements PlayersDao {
         return rowUpdated;
     }
 
+    /**
+     * Methods is used to delete row with player's info from the DB
+     * @param id - id of the player that has to be deleted from the DB
+     * @return
+     * @throws SQLException
+     */
     @Override
     public boolean delete(int id) throws SQLException {
 
@@ -122,9 +166,4 @@ public class DaoPlayers implements PlayersDao {
 
         return rowDeleted;
     }
-
-
-
-
-
 }
