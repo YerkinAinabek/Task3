@@ -7,7 +7,7 @@
         <packaging>war</packaging>
       </options>
     </properties>
-    <root id="archive" name="WebApplication-1.0-SNAPSHOT.war">
+    <root id="archive" name="bookShelf.war">
       <element id="artifact" artifact-name="Task3Ultimate:war exploded" />
     </root>
   </artifact>
