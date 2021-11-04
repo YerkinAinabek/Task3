@@ -12,14 +12,18 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import static com.example.WebApplication.util.DataSourceFactory.getConnection;
 
 @WebServlet("/")
 public class PlayersServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private DaoPlayers daoPlayers;
+    private final DaoPlayers daoPlayers;
 
-    public void init() {
-        daoPlayers = new DaoPlayers();
+    public PlayersServlet() {
+        daoPlayers = new DaoPlayers(getConnection());
+    }
+    public PlayersServlet(DaoPlayers dao) {
+        daoPlayers = dao;
     }
 
 
