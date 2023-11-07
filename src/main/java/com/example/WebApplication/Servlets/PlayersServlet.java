@@ -109,7 +109,7 @@ public class PlayersServlet extends HttpServlet {
 
     private void listPlayers (HttpServletRequest req, HttpServletResponse resp) throws SQLException, IOException, ServletException {
 
-        List < Players > listPlayers = daoPlayers.findAll();
+        List <Players> listPlayers = daoPlayers.findAll();
         req.setAttribute("listPlayers", listPlayers);
         RequestDispatcher dispatcher = req.getRequestDispatcher("WEB-INF/jsp/players-list.jsp");
         dispatcher.forward(req, resp);
